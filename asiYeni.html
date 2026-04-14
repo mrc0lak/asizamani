@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aşı Takip| Geleceğin Sağlık Asistanı</title>
+    <style>
+        
+        body {
+            /* 1. url: Görselin yolu 
+            2. auto: Eğer görsel yüklenmezse tarayıcının varsayılan imleci görünsün (bu kısmı eklemek zorunludur)
+                */
+            cursor: url(photos/enjektörİcon.png), auto; 
+        }
+
+        /* Modern Renk Paleti ve Temel Ayarlar */
+        :root {
+            --primary-dark: #1A365D;
+            --primary: #2B6CB0;
+            --primary-light: #EBF8FF;
+            --accent: #38B2AC;
+            --accent-light: #E6FFFA;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --bg-gray: #F7FAFC;
+            --white: #FFFFFF;
+            --warning: #DD6B20;
+            --warning-light: #FFFAF0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Navigasyon Bar */
+        nav {
+            background-color: var(--white);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        nav ul li a:hover, nav ul li a.active-link {
+            color: var(--accent);
+        }
+
+        .search-bar {
+            padding: 8px 15px;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            outline: none;
+            width: 200px;
+        }
+
+        /* Sayfa Geçişleri */
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            padding: 40px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Anasayfa - Hero Bölümü */
+        .hero {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--primary-light) 100%);
+            border-radius: 24px;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(43, 108, 176, 0.05);
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            max-width: 800px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--white);
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 15px rgba(56, 178, 172, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: #2c7a7b;
+            transform: translateY(-2px);
+        }
+
+        /* Anasayfa - Gelecek Özellikler Kartları */
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background-color: var(--warning-light);
+            color: var(--warning);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Bexsero Hesaplayıcı Bölümü (Önceki mantık, yeni tasarım) */
+        .calc-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .calc-wrapper h2 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .calc-wrapper > p {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .form-group { margin-bottom: 25px; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            color: var(--text-main);
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-calc {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-calc:hover { background-color: var(--primary-dark); }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .status-normal {
+            background-color: var(--primary-light);
+            border-left: 5px solid var(--primary);
+        }
+
+        .status-warning {
+            background-color: var(--warning-light);
+            border-left: 5px solid var(--warning);
+        }
+
+        .disclaimer {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo" onclick="navigate('home')">
+        <span class="logo-icon">✚</span> AŞI TAKVİM
+    </div>
+    <ul>
+        <li><a onclick="navigate('home')" id="link-home" class="active-link">Anasayfa</a></li>
+        <li><a onclick="navigate('bexsero')" id="link-bexsero">Bexsero Aşısı</a></li>
+        <li><a style="color: #cbd5e0; cursor: default;">Dokümanlar</a></li>
+        <li><a style="color: #cbd5e0; cursor: default;">İletişim</a></li>
+    </ul>
+    <input type="text" class="search-bar" placeholder="Sitede ara...">
+</nav>
+
+<section id="home" class="active">
+    <div class="hero">
+        <h1>Sitemiz Heyecan Verici Bir Dönüşümden Geçiyor: Yapım Aşamasındadır.</h1>
+        <p>Sağlık rehberinizi, aşı takip sistemlerinizi ve dijital asistan araçlarını daha modern, entegre ve kullanışlı hale getirmek için yoğun bir şekilde çalışıyoruz.</p>
+        <button class="btn-primary" onclick="navigate('bexsero')">🎯 Şimdilik, Bexsero Aşı Hesaplayıcımızı Deneyin</button>
+    </div>
+
+    <h2 class="section-title">Gelecek Özellikler:</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📖</div>
+            <h3>Hastalık Kütüphanesi</h3>
+            <p>Sağlık rehberinizi ve takvim araçlarını hastaların kullanımına sunacağımız detaylı modül.</p>
+            <div class="badge">⏱ Geliştirilmektedir</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💉</div>
+            <h3>HATS Entegrasyonu</h3>
+            <p>Hekim Aşı Takip Sistemi (HATS) ile tam entegre çalışacak merkezi dijital aşı kayıt ve hatırlatma altyapısı.</p>
+            <div class="badge">⏱ Geliştirilmektedir</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📰</div>
+            <h3>Sağlık Blogu</h3>
+            <p>Güncel makaleler, yayınlar ve tıbbi gelişmelerin paylaşılacağı dinamik blog altyapısı.</p>
+            <div class="badge">⏱ Geliştirilmektedir</div>
+        </div>
+    </div>
+</section>
+
+<section id="bexsero">
+    <div class="calc-wrapper">
+        <h2>Bexsero Doz Takvimi</h2>
+        <p>Hastanın doğum tarihini girerek otomatik şema oluşturun.</p>
+        
+        <div class="form-group">
+            <label for="birthDate">Doğum Tarihi:</label>
+            <input type="date" id="birthDate">
+        </div>
+
+        <button class="btn-calc" onclick="calculateDose()">Takvimi Hesapla</button>
+
+        <div id="result" class="result-box">
+            <h3 id="ageText" style="color: var(--primary-dark); margin-bottom: 10px;"></h3>
+            <div id="doseDetails" style="color: var(--text-main);"></div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Yasal Uyarı:</strong> Bu algoritma bilgilendirme amaçlıdır. Klinik kararlar hekim inisiyatifindedir.
+        </div>
+    </div>
+</section>
+
+<footer>
+    Copyright © 2026 Aşı Takip. Tüm hakları saklıdır.
+</footer>
+
+<script>
+    // Sekme Yönlendirme Fonksiyonu
+    function navigate(pageId) {
+        // Tüm sayfaları gizle
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        // Hedef sayfayı göster
+        document.getElementById(pageId).classList.add('active');
+        
+        // Link renklerini güncelle
+        document.getElementById('link-home').classList.remove('active-link');
+        document.getElementById('link-bexsero').classList.remove('active-link');
+        document.getElementById('link-' + pageId).classList.add('active-link');
+    }
+
+    // Aşı Hesaplama Mantığı (Bir önceki sistemin aynısı, CSS entegrasyonlu)
+    function calculateDose() {
+        const dateInput = document.getElementById('birthDate').value;
+        const resultDiv = document.getElementById('result');
+        const ageTextDiv = document.getElementById('ageText');
+        const doseDetailsDiv = document.getElementById('doseDetails');
+
+        if (!dateInput) {
+            alert("Lütfen işleme devam etmek için bir tarih seçin.");
+            return;
+        }
+
+        const birthDate = new Date(dateInput);
+        const today = new Date();
+        
+        let months = (today.getFullYear() - birthDate.getFullYear()) * 12 + (today.getMonth() - birthDate.getMonth());
+        if (today.getDate() < birthDate.getDate()) months--;
+
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        
+        resultDiv.style.display = 'block';
+        ageTextDiv.innerHTML = `Hastanın Yaşı: ${years > 0 ? years + ' yıl ' : ''}${remainingMonths} ay`;
+
+        let html = "";
+
+        if (months < 2) {
+            resultDiv.className = 'result-box status-warning';
+            html = "<strong>Klinik Uyarı:</strong> 2 aydan küçük bebekler için rutin şemada yeri yoktur. Hekim değerlendirmesi gereklidir.";
+        } 
+        else if (months >= 2 && months <= 5) {
+            resultDiv.className = 'result-box status-normal';
+            html = "<b>2-5 Ay Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 2 ay arayla)<br>• <strong>Hatırlatma:</strong> 1 Doz (2. yaşta, son dozdan en az 6 ay sonra)";
+        } 
+        else if (months >= 6 && months <= 11) {
+            resultDiv.className = 'result-box status-normal';
+            html = "<b>6-11 Ay Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 2 ay arayla)<br>• <strong>Hatırlatma:</strong> 1 Doz (2. yaşta, son dozdan en az 2 ay sonra)";
+        } 
+        else if (months >= 12 && months <= 23) {
+            resultDiv.className = 'result-box status-normal';
+            html = "<b>12-23 Ay Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 2 ay arayla)<br>• <strong>Hatırlatma:</strong> 1 Doz (İkinci dozdan 12-23 ay sonra)";
+        } 
+        else if (months >= 24 && months <= 300) { 
+            resultDiv.className = 'result-box status-normal';
+            html = "<b>2-25 Yaş Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 1 ay arayla)<br>• <strong>Hatırlatma:</strong> Rutin değildir (Yüksek riskli gruplarda değerlendirilir).";
+        } 
+        else {
+            resultDiv.className = 'result-box status-warning';
+            html = "<strong>Bilgi:</strong> 25 yaş ve üzeri yetişkinlerde rutin aşılama şeması dışındadır.";
+        }
+
+        doseDetailsDiv.innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
