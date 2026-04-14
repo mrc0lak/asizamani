@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aşı Takip| Geleceğin Sağlık Asistanı</title>
+    <title>Sağlık Portalı | Geleceğin Sağlık Asistanı</title>
     <style>
-        
-        body {
-            /* 1. url: Görselin yolu 
-            2. auto: Eğer görsel yüklenmezse tarayıcının varsayılan imleci görünsün (bu kısmı eklemek zorunludur)
-                */
-            cursor: url(photos/enjektörİcon.png), auto; 
-        }
-
         /* Modern Renk Paleti ve Temel Ayarlar */
         :root {
             --primary-dark: #1A365D;
@@ -218,7 +210,7 @@
             gap: 5px;
         }
 
-        /* Bexsero Hesaplayıcı Bölümü (Önceki mantık, yeni tasarım) */
+        /* Bexsero Hesaplayıcı Bölümü */
         .calc-wrapper {
             max-width: 600px;
             margin: 0 auto;
@@ -296,6 +288,21 @@
             border-left: 5px solid var(--warning);
         }
 
+        ul.date-list {
+            list-style-type: none;
+            margin-top: 15px;
+            padding: 0;
+        }
+
+        ul.date-list li {
+            margin-bottom: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+        }
+
         .disclaimer {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -319,7 +326,7 @@
 
 <nav>
     <div class="logo" onclick="navigate('home')">
-        <span class="logo-icon">✚</span> AŞI TAKVİM
+        <span class="logo-icon">✚</span> SAĞLIK PORTALI
     </div>
     <ul>
         <li><a onclick="navigate('home')" id="link-home" class="active-link">Anasayfa</a></li>
@@ -373,39 +380,53 @@
         <button class="btn-calc" onclick="calculateDose()">Takvimi Hesapla</button>
 
         <div id="result" class="result-box">
-            <h3 id="ageText" style="color: var(--primary-dark); margin-bottom: 10px;"></h3>
+            <h3 id="ageText" style="color: var(--primary-dark); margin-bottom: 5px;"></h3>
+            <p id="schemaTitle" style="font-weight: 600; margin-bottom: 15px; color: var(--primary);"></p>
             <div id="doseDetails" style="color: var(--text-main);"></div>
         </div>
 
         <div class="disclaimer">
-            <strong>Yasal Uyarı:</strong> Bu algoritma bilgilendirme amaçlıdır. Klinik kararlar hekim inisiyatifindedir.
+            <strong>Yasal Uyarı:</strong> Bu algoritma bilgilendirme amaçlıdır ve aşılama işlemlerinin bugün başladığını varsayar. Klinik kararlar hekim inisiyatifindedir.
         </div>
     </div>
 </section>
 
 <footer>
-    Copyright © 2026 Aşı Takip. Tüm hakları saklıdır.
+    Copyright © 2026 Sağlık Portalı. Tüm hakları saklıdır.
 </footer>
 
 <script>
     // Sekme Yönlendirme Fonksiyonu
     function navigate(pageId) {
-        // Tüm sayfaları gizle
         document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-        // Hedef sayfayı göster
         document.getElementById(pageId).classList.add('active');
         
-        // Link renklerini güncelle
         document.getElementById('link-home').classList.remove('active-link');
         document.getElementById('link-bexsero').classList.remove('active-link');
         document.getElementById('link-' + pageId).classList.add('active-link');
     }
 
-    // Aşı Hesaplama Mantığı (Bir önceki sistemin aynısı, CSS entegrasyonlu)
+    // Tarihi Gün.Ay.Yıl formatına çeviren yardımcı fonksiyon
+    function formatDate(date) {
+        let d = date.getDate().toString().padStart(2, '0');
+        let m = (date.getMonth() + 1).toString().padStart(2, '0');
+        let y = date.getFullYear();
+        return `${d}.${m}.${y}`;
+    }
+
+    // Bir tarihe ay ekleyen yardımcı fonksiyon
+    function addMonths(date, monthsToAdd) {
+        let newDate = new Date(date);
+        newDate.setMonth(newDate.getMonth() + monthsToAdd);
+        return newDate;
+    }
+
+    // İleri Düzey Aşı Hesaplama Mantığı
     function calculateDose() {
         const dateInput = document.getElementById('birthDate').value;
         const resultDiv = document.getElementById('result');
         const ageTextDiv = document.getElementById('ageText');
+        const schemaTitleDiv = document.getElementById('schemaTitle');
         const doseDetailsDiv = document.getElementById('doseDetails');
 
         if (!dateInput) {
@@ -413,8 +434,10 @@
             return;
         }
 
-        const birthDate = new Date(dateInput);
-        const today = new Date();
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        let birthDate = new Date(dateInput);
+        birthDate.setHours(0,0,0,0);
         
         let months = (today.getFullYear() - birthDate.getFullYear()) * 12 + (today.getMonth() - birthDate.getMonth());
         if (today.getDate() < birthDate.getDate()) months--;
@@ -426,29 +449,94 @@
         ageTextDiv.innerHTML = `Hastanın Yaşı: ${years > 0 ? years + ' yıl ' : ''}${remainingMonths} ay`;
 
         let html = "";
+        let dose1, dose2, booster;
 
         if (months < 2) {
             resultDiv.className = 'result-box status-warning';
-            html = "<strong>Klinik Uyarı:</strong> 2 aydan küçük bebekler için rutin şemada yeri yoktur. Hekim değerlendirmesi gereklidir.";
+            schemaTitleDiv.innerHTML = "Erken Dönem Uyarı Şeması";
+            
+            dose1 = addMonths(birthDate, 2);
+            dose2 = addMonths(dose1, 2);
+            booster = addMonths(birthDate, 12); 
+            
+            let minBooster = addMonths(dose2, 6);
+            if(booster < minBooster) booster = minBooster;
+
+            html = `Aşıya erken başlanamaz. Başlanabilecek en erken tarihler aşağıdadır:
+                    <ul class="date-list">
+                        <li><strong>1. Doz:</strong> ${formatDate(dose1)} (2. Ay dolduğunda)</li>
+                        <li><strong>2. Doz:</strong> ${formatDate(dose2)} (1. dozdan 2 ay sonra)</li>
+                        <li><strong>Hatırlatma:</strong> ${formatDate(booster)} (2. yaşta)</li>
+                    </ul>`;
         } 
         else if (months >= 2 && months <= 5) {
             resultDiv.className = 'result-box status-normal';
-            html = "<b>2-5 Ay Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 2 ay arayla)<br>• <strong>Hatırlatma:</strong> 1 Doz (2. yaşta, son dozdan en az 6 ay sonra)";
+            schemaTitleDiv.innerHTML = "2-5 Ay Grubu Şeması";
+            
+            dose1 = today;
+            dose2 = addMonths(dose1, 2);
+            
+            let minAgeBooster = addMonths(birthDate, 12);
+            let minIntervalBooster = addMonths(dose2, 6);
+            booster = minAgeBooster > minIntervalBooster ? minAgeBooster : minIntervalBooster;
+
+            html = `Aşılamaya bugün başlandığı varsayılarak hesaplanmıştır:
+                    <ul class="date-list">
+                        <li><strong>1. Doz:</strong> ${formatDate(dose1)} (Bugün)</li>
+                        <li><strong>2. Doz:</strong> ${formatDate(dose2)} (1. dozdan 2 ay sonra)</li>
+                        <li><strong>Hatırlatma:</strong> ${formatDate(booster)} (Son dozdan 6 ay sonra)</li>
+                    </ul>`;
         } 
         else if (months >= 6 && months <= 11) {
             resultDiv.className = 'result-box status-normal';
-            html = "<b>6-11 Ay Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 2 ay arayla)<br>• <strong>Hatırlatma:</strong> 1 Doz (2. yaşta, son dozdan en az 2 ay sonra)";
+            schemaTitleDiv.innerHTML = "6-11 Ay Grubu Şeması";
+            
+            dose1 = today;
+            dose2 = addMonths(dose1, 2);
+            
+            let minAgeBooster = addMonths(birthDate, 12); 
+            let minIntervalBooster = addMonths(dose2, 2); 
+            booster = minAgeBooster > minIntervalBooster ? minAgeBooster : minIntervalBooster;
+
+            html = `Aşılamaya bugün başlandığı varsayılarak hesaplanmıştır:
+                    <ul class="date-list">
+                        <li><strong>1. Doz:</strong> ${formatDate(dose1)} (Bugün)</li>
+                        <li><strong>2. Doz:</strong> ${formatDate(dose2)} (1. dozdan 2 ay sonra)</li>
+                        <li><strong>Hatırlatma:</strong> ${formatDate(booster)} (Son dozdan 2 ay sonra)</li>
+                    </ul>`;
         } 
         else if (months >= 12 && months <= 23) {
             resultDiv.className = 'result-box status-normal';
-            html = "<b>12-23 Ay Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 2 ay arayla)<br>• <strong>Hatırlatma:</strong> 1 Doz (İkinci dozdan 12-23 ay sonra)";
+            schemaTitleDiv.innerHTML = "12-23 Ay Grubu Şeması";
+            
+            dose1 = today;
+            dose2 = addMonths(dose1, 2);
+            booster = addMonths(dose2, 12); 
+
+            html = `Aşılamaya bugün başlandığı varsayılarak hesaplanmıştır:
+                    <ul class="date-list">
+                        <li><strong>1. Doz:</strong> ${formatDate(dose1)} (Bugün)</li>
+                        <li><strong>2. Doz:</strong> ${formatDate(dose2)} (1. dozdan 2 ay sonra)</li>
+                        <li><strong>Hatırlatma:</strong> ${formatDate(booster)} (2. dozdan 12 ay sonra)</li>
+                    </ul>`;
         } 
         else if (months >= 24 && months <= 300) { 
             resultDiv.className = 'result-box status-normal';
-            html = "<b>2-25 Yaş Grubu Şeması:</b><br><br>• <strong>Temel:</strong> 2 Doz (En az 1 ay arayla)<br>• <strong>Hatırlatma:</strong> Rutin değildir (Yüksek riskli gruplarda değerlendirilir).";
+            schemaTitleDiv.innerHTML = "2-25 Yaş Grubu Şeması";
+            
+            dose1 = today;
+            dose2 = addMonths(dose1, 1);
+
+            html = `Aşılamaya bugün başlandığı varsayılarak hesaplanmıştır:
+                    <ul class="date-list">
+                        <li><strong>1. Doz:</strong> ${formatDate(dose1)} (Bugün)</li>
+                        <li><strong>2. Doz:</strong> ${formatDate(dose2)} (1. dozdan 1 ay sonra)</li>
+                        <li><strong>Hatırlatma:</strong> Gerekli değil (Sadece riskli gruplarda)</li>
+                    </ul>`;
         } 
         else {
             resultDiv.className = 'result-box status-warning';
+            schemaTitleDiv.innerHTML = "Aşılama Şeması Dışı";
             html = "<strong>Bilgi:</strong> 25 yaş ve üzeri yetişkinlerde rutin aşılama şeması dışındadır.";
         }
 
